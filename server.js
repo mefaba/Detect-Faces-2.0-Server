@@ -8,20 +8,30 @@ const profile = require("./controllers/profile.js")
 const register = require("./controllers/register.js")
 const signin = require("./controllers/signin.js")
 
-const db = knex({
+//HEROKU POSTGRE CONNECTION
+/* const db = knex({
     client: 'pg',
     connection: {
     connectionString: process.env.DATABASE_URL,
     ssl: true,
     }
-  });
+  }); */
+//LOCAL POSTGRE CONNECTION
+const db = knex({
+client: 'pg',
+connection: {
+    host : '127.0.0.1',
+    user : 'postgres',
+    password : 'test',
+    database : 'facedetect-base'
+}
+})
+/* db.select().table('users').then(res => console.log(res)) */
 
 const app = express()
 app.use(express.urlencoded({extended: false}));
 app.use(express.json())
 app.use(cors())
-
-app.get("/",(req,res)=>{res.json("It is working ma dude")})
 
 
 app.post("/signin",(req,res) => { signin.handleSignin(req,res,db,bcrypt) })
@@ -34,9 +44,11 @@ app.put("/image",(req,res) => { image.handleImage(req,res,db) })
 
 app.post("/imageURL",(req,res) => { image.handleApiCall(req,res) })
 
+app.get("/",(req,res)=>{res.json("It is working ma dude")})
 
-app.listen(process.env.PORT || 3000, () => {
-    console.log(`app is running on ${process.env.PORT}`)
+
+app.listen(process.env.PORT || 5000, () => {
+    console.log(`app is running on ${process.env.PORT || 5000}`)
 })
 
 
